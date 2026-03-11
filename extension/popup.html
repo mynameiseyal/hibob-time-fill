@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    body {
+      width: 240px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13px;
+      padding: 16px;
+      margin: 0;
+      color: #1a1a2e;
+      background: #f8f9fb;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .day-row {
+      display: flex;
+      align-items: center;
+      padding: 5px 0;
+    }
+    .day-row label {
+      cursor: pointer;
+      user-select: none;
+      margin-left: 8px;
+    }
+    .day-row input {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      accent-color: #4a6cf7;
+    }
+    .saved-msg {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #4a6cf7;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .saved-msg.show {
+      opacity: 1;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #e0e0e0;
+      margin: 12px 0;
+    }
+    .info {
+      font-size: 11px;
+      color: #777;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <h2>Work Days</h2>
+  <div id="days"></div>
+  <div class="saved-msg" id="saved">Settings saved</div>
+  <hr>
+  <div class="info">
+    Check the days you normally work. The extension will only fill attendance for these days.
+  </div>
+  <script src="constants.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

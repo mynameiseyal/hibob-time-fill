@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "HiBob Attendance Filler",
+  "version": "2.2",
+  "description": "Auto-fill HiBob attendance with randomized work hours",
+  "permissions": ["storage"],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "HiBob Attendance Filler",
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://app.hibob.com/attendance/*"],
+      "js": ["constants.js", "content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
