@@ -6,14 +6,30 @@
 
   const filledDates = new Set();
 
+  const EMP_ID_RE = /\/employees\/(\d+)/;
+
   function getEmployeeId() {
-    const match = location.href.match(/employees\/(\d+)/);
-    if (match) return match[1];
-    const perfEntries = performance.getEntriesByType("resource");
-    for (const entry of perfEntries) {
-      const m = entry.name.match(/attendance\/employees\/(\d+)/);
-      if (m) return m[1];
+    // 1. Direct from URL (works on /employees/{id}/... pages)
+    const urlMatch = location.href.match(EMP_ID_RE);
+    if (urlMatch) return urlMatch[1];
+
+    // 2. From any recorded network request (attendance or otherwise)
+    try {
+      const perfEntries = performance.getEntriesByType("resource");
+      for (const entry of perfEntries) {
+        const m = entry.name.match(/\/(?:attendance\/)?employees\/(\d+)/);
+        if (m) return m[1];
+      }
+    } catch (e) {
+      console.warn(TAG, "performance lookup failed", e);
     }
+
+    // 3. Scan inline scripts / page HTML for an employeeId reference
+    const htmlMatch = document.documentElement.innerHTML.match(
+      /"employeeId"\s*:\s*"?(\d{6,})"?/
+    );
+    if (htmlMatch) return htmlMatch[1];
+
     return null;
   }
 
@@ -79,7 +95,16 @@
       credentials: "same-origin",
     });
 
-    return { ok: resp.ok, status: resp.status };
+    let errorBody = null;
+    if (!resp.ok) {
+      try {
+        errorBody = await resp.text();
+      } catch (e) {
+        errorBody = "<unreadable response body>";
+      }
+    }
+
+    return { ok: resp.ok, status: resp.status, errorBody };
   }
 
   function buildPanel() {
@@ -189,7 +214,7 @@
         } else {
           failed++;
           progress.textContent = `[${i + 1}/${days.length}] ${day.display} \u2014 FAILED (${resp.status})`;
-          console.warn(TAG, "Failed:", day.date, resp.status);
+          console.warn(TAG, "Failed:", day.date, resp.status, resp.errorBody);
         }
       } catch (err) {
         failed++;
